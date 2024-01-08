@@ -3,19 +3,23 @@
 RSpec.describe RuboCop::Cop::Jbuilder::PartialExists, :config do
   let(:config) { RuboCop::Config.new }
 
-  # TODO: Write test code
-  #
-  # For example
-  it 'registers an offense when using `#bad_method`' do
+  it 'for "json.partial!" register an offense when partial does not exist' do
     expect_offense(<<~RUBY)
-      bad_method
-      ^^^^^^^^^^ Use `#good_method` instead of `#bad_method`.
+      json.partial! 'comments/comment', comments: @message.comment
+                    ^^^^^^^^^^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/comments/_comment.json.jbuilder
     RUBY
   end
 
-  it 'does not register an offense when using `#good_method`' do
+  it 'for "json.partial!" register an offense when local partial does not exist' do
+    expect_offense(<<~RUBY)
+      json.partial! 'comment', comments: @message.comment
+                    ^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/testing/_comment.json.jbuilder
+    RUBY
+  end
+
+  it "does not register an offense when partial exists" do
     expect_no_offenses(<<~RUBY)
-      good_method
+      json.partial! 'exists'
     RUBY
   end
 end

@@ -1,67 +1,54 @@
 # frozen_string_literal: true
 
+TEST_FILENAME = File.join(Dir.pwd, "app/views/testing/show.json.jbuilder")
+
 module RuboCop
   module Cop
     module Jbuilder
-      # Checks that partial path exist
-      #
-      # @safety
-      #   Delete this section if the cop is not unsafe (`Safe: false` or
-      #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-      #   unsafe.
-      #
-      # @example EnforcedStyle: bar (default)
-      #   # Description of the `bar` style.
-      #
-      #   # bad
-      #   bad_bar_method
-      #
-      #   # bad
-      #   bad_bar_method(args)
-      #
-      #   # good
-      #   good_bar_method
-      #
-      #   # good
-      #   good_bar_method(args)
-      #
-      # @example EnforcedStyle: foo
-      #   # Description of the `foo` style.
-      #
-      #   # bad
-      #   bad_foo_method
-      #
-      #   # bad
-      #   bad_foo_method(args)
-      #
-      #   # good
-      #   good_foo_method
-      #
-      #   # good
-      #   good_foo_method(args)
-      #
       class PartialExists < Base
-        # TODO: Implement the cop in here.
-        #
-        # In many cases, you can use a node matcher for matching node pattern.
-        # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-        #
-        # For example
-        MSG = 'Use `#good_method` instead of `#bad_method`.'
+        MSG = "Partial not found. Looked for: %<path>s"
 
-        # TODO: Don't call `on_send` unless the method name is in this list
-        # If you don't need `on_send` in the cop you created, remove it.
-        RESTRICT_ON_SEND = %i[bad_method].freeze
+        RESTRICT_ON_SEND = %i[partial!].freeze
 
-        # @!method bad_method?(node)
-        def_node_matcher :bad_method?, <<~PATTERN
-          (send nil? :bad_method ...)
+        def_node_matcher :partial_method?, <<~PATTERN
+          (send (send nil? :json) :partial! $str ...)
         PATTERN
 
         def on_send(node)
-          return unless bad_method?(node)
+          partial_method?(node) do |actual|
+            full_path = get_view_path_from(actual)
+            path = full_path.sub(rails_root_dirname(node) + "/", "")
+            add_offense(actual, message: format(MSG, path:)) unless File.exist?(full_path)
+          end
+        end
 
-          add_offense(node)
+        private
+
+        def get_view_path_from(node)
+          partial = node.source[1..-2]
+          segments = partial.split("/")
+          segments.last.sub!(/.*/, '_\&.json.jbuilder')
+
+          dirname = (segments.count == 1) ? sut_dirname(node) : rails_views_dirname(node)
+          File.join(dirname, *segments)
+        end
+
+        def sut_dirname(node)
+          File.dirname(filename(node))
+        end
+
+        def rails_views_dirname(node)
+          File.join(rails_root_dirname(node), "app/views")
+        end
+
+        def rails_root_dirname(node)
+          filename(node).split("/app/").first
+        end
+
+        def filename(node)
+          filename = node.location.expression.source_buffer.name
+
+          (filename == "(string)") ? TEST_FILENAME : filename
         end
       end
     end

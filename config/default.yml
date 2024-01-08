@@ -1,6 +1,4 @@
-# Write it!
-
 Jbuilder/PartialExists:
   Description: "Check that the referred partial exists."
-  Enabled: pending
+  Enabled: true
   VersionAdded: "<<next>>"
