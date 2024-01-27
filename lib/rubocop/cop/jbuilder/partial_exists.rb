@@ -13,6 +13,7 @@ module RuboCop
         def_node_matcher :has_partial?, <<~PATTERN
           {
             (send (send nil? :json) :partial! $str ...)
+            (send (send nil? :json) :partial! (hash (pair (sym :partial) $str) ...))
             (send (send nil? :json) :array! ... (hash (pair (sym :partial) $str) ...))
           }
         PATTERN
