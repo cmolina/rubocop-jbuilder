@@ -8,13 +8,10 @@ module RuboCop
       class PartialExists < Base
         MSG = "Partial not found. Looked for: %<path>s"
 
-        RESTRICT_ON_SEND = %i[partial! array!].freeze
-
         def_node_matcher :has_partial?, <<~PATTERN
           {
             (send (send nil? :json) :partial! $str ...)
-            (send (send nil? :json) :partial! (hash (pair (sym :partial) $str) ...))
-            (send (send nil? :json) :array! ... (hash (pair (sym :partial) $str) ...))
+            (send (send nil? :json) ... (hash (pair (sym :partial) $str) ...))
           }
         PATTERN
 
