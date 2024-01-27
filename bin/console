@@ -8,5 +8,22 @@ require "rubocop"
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 
+# A helper for finding the right pattern for some specific code you'd like to match.
+# @param code [String] the code you'd like to match
+# @param pattern [String] a ruby-parse pattern
+# @return [RuboCop::AST::Node] the matched node if there is a match, or the source node otherwise
+def matches(code, pattern)
+  source = RuboCop::ProcessedSource.new(code, RUBY_VERSION.to_f)
+  node = source.ast
+  match = RuboCop::NodePattern.new(pattern).match(node)
+  if match
+    puts "it is a match!"
+    match
+  else
+    puts "edit your pattern :/"
+    node
+  end
+end
+
 require "irb"
 IRB.start(__FILE__)
