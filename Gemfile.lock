@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubocop-jbuilder (0.1.0)
+    rubocop-jbuilder (0.1.1)
       rubocop
 
 GEM
@@ -67,6 +67,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   rake (~> 13.0)
@@ -94,7 +95,7 @@ CHECKSUMS
   rspec-support (3.12.1) sha256=f969b85d0068ff97bc47c9d6fc2bca9706d73406f2b4e5d3b346443d8734c8cf
   rubocop (1.59.0) sha256=09cf4b874ce87f777e8dc711b0f5e2ef4b123eb20d7e38ae2b85c43015a0fc43
   rubocop-ast (1.30.0) sha256=faad6452b1018fee0dd9e21a44445908e94ee2a4435932a9dae0e0740b6349b3
-  rubocop-jbuilder (0.1.0)
+  rubocop-jbuilder (0.1.1)
   rubocop-performance (1.20.2) sha256=1bb1fa8c427fac7ba3c8dd2decb9860f23cb2d6c40350bedc88538de8875c731
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
   standard (1.33.0) sha256=c8e42a41a0facd7b916fdd1d2f02c8e1d264d3fcc6bd91b43e7e90b27ffd92a0
