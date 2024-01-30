@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'pathname'
+require "pathname"
 
 TEST_FILENAME = File.join(Dir.pwd, "app/views/testing/nested/show.json.jbuilder")
 
