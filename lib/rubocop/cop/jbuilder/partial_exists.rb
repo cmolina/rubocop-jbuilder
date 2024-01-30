@@ -19,37 +19,37 @@ module RuboCop
 
         def on_send(node)
           has_partial?(node) do |actual|
-            all_paths = get_view_paths_from(actual)
+            all_globs = get_view_globs_from(actual)
 
-            return if all_paths.any? { |full_path| File.exist?(full_path) }
+            return if all_globs.any? { |glob| Dir.glob(glob).any? }
 
             base_path = rails_root_dirname(node)
-            relative_paths = all_paths.map { |full_path| relative_path(full_path, base_path) }
+            relative_paths = all_globs.map { |glob| relative_path(glob, base_path) }
             add_offense(actual, message: format(MSG, paths: relative_paths.join(", ")))
           end
         end
 
         private
 
-        def get_view_paths_from(node)
+        def get_view_globs_from(node)
           partial = node.source[1..-2]
           segments = partial.split("/")
-          segments.last.sub!(/.*/, '_\&.json.jbuilder')
+          segments.last.sub!(/.*/, '_\&*.jbuilder')
 
           specific_path = segments.count != 1
           return [File.join(rails_views_dirname(node), *segments)] if specific_path
 
-          paths = []
+          globs = []
           current_dirname = sut_dirname(node)
           while current_dirname != rails_views_dirname(node)
-            paths << File.join(current_dirname, *segments)
+            globs << File.join(current_dirname, *segments)
             current_dirname = File.expand_path("..", current_dirname)
           end
-          paths
+          globs
         end
 
-        def relative_path(full_path, base_path)
-          full = Pathname.new(full_path)
+        def relative_path(glob, base_path)
+          full = Pathname.new(glob.sub("*", ""))
           base = Pathname.new(base_path)
           full.relative_path_from(base).to_s
         end

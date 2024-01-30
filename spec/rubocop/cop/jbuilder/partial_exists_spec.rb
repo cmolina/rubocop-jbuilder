@@ -7,14 +7,14 @@ RSpec.describe RuboCop::Cop::Jbuilder::PartialExists, :config do
     it "register an offense when partial does not exist" do
       expect_offense(<<~RUBY)
         json.partial! 'comments/comment', comments: @message.comment
-                      ^^^^^^^^^^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/comments/_comment.json.jbuilder
+                      ^^^^^^^^^^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/comments/_comment.jbuilder
       RUBY
     end
 
     it "register an offense when local partial does not exist" do
       expect_offense(<<~RUBY)
         json.partial! 'comment', comments: @message.comment
-                      ^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/testing/nested/_comment.json.jbuilder, app/views/testing/_comment.json.jbuilder
+                      ^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/testing/nested/_comment.jbuilder, app/views/testing/_comment.jbuilder
       RUBY
     end
 
@@ -29,14 +29,14 @@ RSpec.describe RuboCop::Cop::Jbuilder::PartialExists, :config do
     it "register an offense when partial does not exist" do
       expect_offense(<<~RUBY)
         json.comments @comments, partial: 'comments/comment', as: :comment
-                                          ^^^^^^^^^^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/comments/_comment.json.jbuilder
+                                          ^^^^^^^^^^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/comments/_comment.jbuilder
       RUBY
     end
 
     it "register an offense when local partial does not exist" do
       expect_offense(<<~RUBY)
         json.comments @comments, partial: 'comment', as: :comment
-                                          ^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/testing/nested/_comment.json.jbuilder, app/views/testing/_comment.json.jbuilder
+                                          ^^^^^^^^^ Jbuilder/PartialExists: Partial not found. Looked for: app/views/testing/nested/_comment.jbuilder, app/views/testing/_comment.jbuilder
       RUBY
     end
 
